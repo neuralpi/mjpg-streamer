@@ -31,7 +31,7 @@ char * LibCamera::getCameraId(){
     return cameraId.data();
 }
 
-void LibCamera::configureStill(uint32_t width, uint32_t height, PixelFormat format, int buffercount, int rotation) {
+void LibCamera::configureStill(uint32_t width, uint32_t height, PixelFormat format, int buffercount, int rotation, int camver) {
     printf("Configuring still capture...\n");
     config_ = camera_->generateConfiguration({ StreamRole::StillCapture });
     if (width && height) {
@@ -50,6 +50,23 @@ void LibCamera::configureStill(uint32_t width, uint32_t height, PixelFormat form
     if (!!(transform & Transform::Transpose))
         throw std::runtime_error("transforms requiring transpose not supported");
     config_->transform = transform;
+
+    if(camver == 1){
+        std::unique_ptr<CameraConfiguration> configR_ = camera_->generateConfiguration({ StreamRole::Raw });
+        configR_->at(0).size = Size(2592, 1944);
+        configR_->at(0).pixelFormat = libcamera::formats::SGBRG10_CSI2P;
+        config_->addConfiguration(configR_->at(0));
+    }else if(camver == 2){
+        std::unique_ptr<CameraConfiguration> configR_ = camera_->generateConfiguration({ StreamRole::Raw });
+        configR_->at(0).size = Size(3280, 2464);
+        configR_->at(0).pixelFormat = libcamera::formats::SRGGB10_CSI2P;
+        config_->addConfiguration(configR_->at(0));
+    }else if(camver == 3){
+        std::unique_ptr<CameraConfiguration> configR_ = camera_->generateConfiguration({ StreamRole::Raw });
+        configR_->at(0).size = Size(4608, 2592);
+        configR_->at(0).pixelFormat = libcamera::formats::SRGGB10_CSI2P;
+        config_->addConfiguration(configR_->at(0));
+    }
 
     CameraConfiguration::Status validation = config_->validate();
 	if (validation == CameraConfiguration::Invalid)
@@ -221,7 +238,7 @@ void LibCamera::set(ControlList controls){
 
 int LibCamera::resetCamera(uint32_t width, uint32_t height, PixelFormat format, int buffercount, int rotation) {
     stopCamera();
-    configureStill(width, height, format, buffercount, rotation);
+    configureStill(width, height, format, buffercount, rotation, 0);
     return startCamera();
 }
 

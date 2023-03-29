@@ -3,6 +3,22 @@ mjpg-streamer input plugin: input_libcamera
 
 This plugin provides JPEG data from libcamera.
 
+Improving low-resolution images
+=========
+
+When the resolution is set low (e.g., 640x480), libcamera does not return expected images. 
+
+For example, it shows low-quality images (camera module v.1) or a very narrow area as if it were cropped from a larger image (camera modules v2 and 3),
+
+To fix this problem, a new option "-camver" was added. 
+
+By giving the version number of your camera module (i.e., 1, 2, or 3) to "camver", the quality of low-resolution images improves.
+
+
+```
+./mjpg_streamer -i "input_libcamera.so -camver 1 -r 640x480 -f 30 -s 640x480" -o "output_http.so -w ./www"
+```
+
 Usage
 =====
 

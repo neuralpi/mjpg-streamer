@@ -49,7 +49,8 @@ typedef struct {
         afrange_set, afrange,
         lensposition_set, lensposition,
         camera_set, camera,
-        rotation_set, rotation;
+        rotation_set, rotation,
+        camver_set, camver;
 } context_settings;
 
 typedef struct {
@@ -207,6 +208,7 @@ int input_init(input_parameter *param, int plugin_no)
             {"lensposition", required_argument, 0, 0},  // 19
             {"camera", required_argument, 0, 0},        // 20
             {"rotation", required_argument, 0, 0},      // 21
+            {"camver", required_argument, 0, 0},        // 22
             {0, 0, 0, 0}
         };
     
@@ -273,6 +275,8 @@ int input_init(input_parameter *param, int plugin_no)
             break;
         OPTION_INT(21, rotation)
             break;
+        OPTION_INT(22, camver)
+            break;
         default:
             help();
             return 1;
@@ -291,7 +295,7 @@ int input_init(input_parameter *param, int plugin_no)
         IPRINT("LibCamera::initCamera() failed\n");
         goto fatal_error;
     }
-    pctx->camera.configureStill(width, height, formats::BGR888, settings->buffercount, settings->rotation);
+    pctx->camera.configureStill(width, height, formats::BGR888, settings->buffercount, settings->rotation, settings->camver);
     device_id = pctx->camera.getCameraId();
     in->name = (char*)malloc((strlen(device_id) + 1) * sizeof(char));
     sprintf(in->name, device_id);
