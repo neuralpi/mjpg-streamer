@@ -76,7 +76,12 @@ with debugging symbols enabled, you can do this:
 
 If "make" fails when compiling LibCamera.cpp, please try this:
 
-    make CXX_FLAGS+=-DLIBCAMERA_USES_TRANSFORM
+    rm -rf _build
+    mkdir _build
+    cd _build
+    cmake -DLIBCAMERA_USES_TRANSFORM=ON ..
+    cd ..
+    make
     
 Advanced compilation (via CMake)
 --------------------------------
