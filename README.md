@@ -73,6 +73,10 @@ with debugging symbols enabled, you can do this:
     make distclean
     make CMAKE_BUILD_TYPE=Debug
     sudo make install
+
+If "make" fails when compiling LibCamera.cpp, please try this:
+
+    make CXX_FLAGS+=-DLIBCAMERA_USES_TRANSFORM
     
 Advanced compilation (via CMake)
 --------------------------------

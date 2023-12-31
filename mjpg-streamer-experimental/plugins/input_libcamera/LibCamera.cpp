@@ -41,6 +41,7 @@ void LibCamera::configureStill(uint32_t width, uint32_t height, PixelFormat form
     config_->at(0).pixelFormat = format;
     if (buffercount)
         config_->at(0).bufferCount = buffercount;
+#ifdef LIBCAMERA_USES_TRANSFORM
     Transform transform = Transform::Identity;
     bool ok;
     Transform rot = transformFromRotation(rotation, &ok);
@@ -50,7 +51,11 @@ void LibCamera::configureStill(uint32_t width, uint32_t height, PixelFormat form
     if (!!(transform & Transform::Transpose))
         throw std::runtime_error("transforms requiring transpose not supported");
     config_->transform = transform;
-
+#else
+    if(rotation == 180){
+        config_->orientation = libcamera::Orientation::Rotate180;
+    }
+#endif
     if(camver == 1){
         std::unique_ptr<CameraConfiguration> configR_ = camera_->generateConfiguration({ StreamRole::Raw });
         configR_->at(0).size = Size(2592, 1944);
