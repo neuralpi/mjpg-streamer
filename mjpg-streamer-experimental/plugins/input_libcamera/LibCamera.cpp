@@ -184,8 +184,12 @@ int LibCamera::queueRequest(Request *request) {
         return -1;
     {
         std::lock_guard<std::mutex> lock(control_mutex_);
+#ifdef LIBCAMERA_USES_TRANSFORM
+        request->controls() = std::move(controls_);
+#else
         request->controls().merge(controls_, ControlList::MergePolicy::OverwriteExisting);
         controls_.clear();
+#endif
     }
     return camera_->queueRequest(request);
 }
